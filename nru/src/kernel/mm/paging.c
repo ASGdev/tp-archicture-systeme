@@ -289,7 +289,8 @@ PRIVATE struct
  */
 PRIVATE void trigger_clearing(){
 	int i;      /* Loop index.  */
-	kprintf("[MM] Clearing job started");
+	int cleared_frame_count = 0;
+	kprintf("[MM] Clearing job started by proc %d", curr_proc->pid);
 	for (i = 0; i < NR_FRAMES; i++)
 	{
 		/* Local page replacement policy. */
@@ -298,10 +299,10 @@ PRIVATE void trigger_clearing(){
 		{
 			struct pte* pted = getpte(curr_proc, frames[i].addr);
 			pted->accessed = 0;
-				
+			cleared_frame_count++;
 		}
 	}
-	kprintf("[MM] Clearing job finished");
+	kprintf("[MM] Clearing job finished (%d frames cleared)", cleared_frame_count);
 }
 
 #define CLEARING_INTERVAL 50 // clearing is triggerd all the 50 clock ticks
@@ -328,11 +329,13 @@ PRIVATE int allocf(void)
 	int all_class_looked_up = 0;
 	int foundd = -1;
 	int oldest;
+
+	//kprintf("[MM] Allocating for process %d", curr_proc);
 		
 	/* Search for a free frame. */
 	oldest = -1;
 	while(foundd < 1 && all_class_looked_up == 0){
-		for (i = 0; i < NR_FRAMES -1; i++)
+		for (i = 0; i < NR_FRAMES - 1; i++)
 		{
 			/* Found it. */
 			if (frames[i].count == 0)
@@ -375,8 +378,6 @@ PRIVATE int allocf(void)
 					all_class_looked_up = 1;
 					continue;
 				}
-		
-				
 			}
 		}
 	}
@@ -395,7 +396,7 @@ PRIVATE int allocf(void)
 	
 found:		
 
-	kprintf("[MM] Found page %d", i);
+	//kprintf("[MM] Found page %d", i);
 	frames[i].age = ticks;
 	frames[i].count = 1;
 	
