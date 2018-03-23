@@ -94,6 +94,7 @@ PUBLIC void framesUpdate(){
 	}
 }
 
+int pagefault=0;
 
 
 /*============================================================================*
@@ -204,6 +205,8 @@ PRIVATE int swap_in(unsigned frame, addr_t addr)
 	
 	addr &= PAGE_MASK;
 	pg = getpte(curr_proc, addr);
+	pagefault++;
+	kprintf("%d",pagefault);
 	
 	/* Get kernel page. */
 	if ((kpg = getkpg(0)) == NULL)
@@ -327,7 +330,7 @@ PRIVATE int allocf(void)
 	
 	/* Search for a free frame. */
 	oldest = -1;
-	//lru = 1000;
+	lru = 1000; //=> have to be a high value, at the opposite of oldest.
 	for (i = 0; i < NR_FRAMES; i++)
 	{
 		/* Found it. */
@@ -341,10 +344,11 @@ PRIVATE int allocf(void)
 			if (frames[i].count > 1)
 				continue;
 			
+			
 			// Less recently used pages
 			if((LRU(i, lru)) ){
 				lru = i;
-			}else if((LRUEQ(i, lru))&& (OLDEST(i, lru))){
+			}else if((LRUEQ(i, lru)) && (OLDEST(i, lru))){
 				lru = i;
 			}
 			
@@ -356,11 +360,11 @@ PRIVATE int allocf(void)
 	}
 	
 	/* No frame left. */
-	if (oldest < 0)
+	if (lru < 0)
 		return (-1);
 	
 	/* Swap page out. */
-	if (swap_out(curr_proc, frames[i = oldest].addr))
+	if (swap_out(curr_proc, frames[i = lru].addr))
 		return (-1);
 	
 found:		
