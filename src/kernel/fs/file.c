@@ -277,6 +277,7 @@ PUBLIC int dir_add(struct inode *dinode, struct inode *inode, const char *name)
 	return (0);
 }
 
+
 /*
  * Reads from a regular file.
  */
@@ -294,7 +295,13 @@ PUBLIC ssize_t file_read(struct inode *i, void *buf, size_t n, off_t off)
 
 	kprintf("reading file...\n");
 	
+	//int PREFETCH_TRESHOLD = 3;
 	/* Read data. */
+	// check size for prefetching
+	// if((int)(n / BLOCK_SIZE) > PREFETCH_TRESHOLD){
+	// 	kprintf("<< enabling prefetching >>");
+	// }
+	
 	do
 	{
 		blk = block_map(i, off, 0);
