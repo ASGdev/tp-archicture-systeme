@@ -22,11 +22,10 @@
 .PHONY: init
 .PHONY: shutdown
 .PHONY: test
-.PHONY: sched_test
+
 
 # Builds everything.
-all: foobar init shutdown test sched_test
-
+all: foobar init shutdown test
 # Builds foobar.
 foobar:
 	$(CC) $(CFLAGS) $(LDFLAGS) foobar/*.c -o $(SBINDIR)/foobar $(LIBDIR)/libc.a
@@ -43,9 +42,6 @@ shutdown:
 test:
 	$(CC) $(CFLAGS) $(LDFLAGS) test/*.c -o $(SBINDIR)/test $(LIBDIR)/libc.a
 	
-# Builds sched_test.
-sched_test:
-	$(CC) $(CFLAGS) $(LDFLAGS) sched_test/*.c -o $(SBINDIR)/sched_test $(LIBDIR)/libc.a
 	
 # Cleans compilations files.
 clean:
@@ -53,5 +49,5 @@ clean:
 	@rm -f $(SBINDIR)/init
 	@rm -f $(SBINDIR)/shutdown
 	@rm -f $(SBINDIR)/test
-	@rm -f $(SBINDIR)/sched_test
+
 	

@@ -192,5 +192,10 @@
 	 * Reads a block from a block device.
 	 */
 	EXTERN void bdev_readblk(struct buffer *buf);
+
+	/*
+	 * Reads async a block from a block device.
+	 */
+	EXTERN void bdev_readblka(struct buffer *buf);
 	
 #endif /* DEV_H_ */
